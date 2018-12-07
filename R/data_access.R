@@ -114,9 +114,34 @@ nfi_results_data <- function(
 
   # collect?
   if (isTRUE(.collect)) {
-    tbl(conn, table_name) %>% collect()
+    res <- tbl(conn, table_name) %>% collect()
   } else {
-    tbl(conn, table_name)
+    res <- tbl(conn, table_name)
   }
+
+  # attribute settings
+  attr(res, 'nfi') <- nfi
+  # attr(res, 'diamclass') <- diameter_classes
+
+  return(res)
+
+}
+
+nfi_filter_results <- function(
+  nfi_data,
+  variables,
+  ...,
+  .collect = TRUE
+) {
+
+  # capture filter expressions
+  dots <- quos(...)
+
+  # var dispatching
+  PLOTS_vars <- vars_in_PLOTS(variables)
+  PLOTS_DYNAMIC_vars <- var_in_PLOTS_DYNAMIC(variables, attr(nfi_data, 'nfi'))
+  data_vars <- variables[which(variables %in% names(nfi_data))]
+
+  #???
 
 }

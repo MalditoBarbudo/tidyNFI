@@ -65,4 +65,19 @@ test_that("diamclass level works", {
   )
 })
 
+test_that("attribute is set", {
+  expect_identical(
+    attr(nfi_results_data(conn, 'nfi_3', 'genus', FALSE, .collect = FALSE), 'nfi'), 'NFI_3'
+  )
+  expect_identical(
+    attr(nfi_results_data(conn, 'nfi_2', 'genus', FALSE, .collect = TRUE), 'nfi'), 'NFI_2'
+  )
+  # expect_false(
+  #   attr(nfi_results_data(conn, 'nfi_3', 'genus', FALSE, .collect = FALSE), 'diamclass')
+  # )
+  # expect_true(
+  #   attr(nfi_results_data(conn, 'nfi_3', 'genus', TRUE, .collect = FALSE), 'diamclass')
+  # )
+})
+
 nfi_close(conn)
