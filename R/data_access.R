@@ -40,3 +40,83 @@ nfi_close <- function(
 ) {
   pool::poolClose(conn)
 }
+
+#' Retrieve NFI data as tbl
+#'
+#' Get the results data by plot (with or without breakdown)
+#'
+#' Data is retrieved from the postgreSQL db in tbl form
+#'
+#' @section Functional groups:
+#' \code{functional_group} parameter allows to retrieve the table of plots
+#'   broken down by the desired group. Allowed values are:
+#'   \itemize{
+#'     \item{\code{"none"} (No breakdown)}
+#'     \item{\code{"species"}}
+#'     \item{\code{"simplified_species"}}
+#'     \item{\code{"genus"}}
+#'     \item{\code{"dec"} (Deciduous/Esclerophyllous/Conifer)}
+#'     \item{\code{"bc"} (Broadleaf/Conifer)}
+#'   }
+#'
+#' @param conn pool object to access the tables, as obtained from
+#'   \code{\link{nfi_connect}}
+#' @param nfi character indicating the nfi version
+#' @param functional_group Functional group to retrieve table for,
+#'   Default to 'none' (no functional group). See details for more information
+#' @param diameter_classes logical indicating if diameter classes are required
+#'   (breaking down the table by diameter classes). Default to FALSE.
+#' @param .collect Logical indicating if the tbl must be collected locally.
+#'   Default to TRUE
+#'
+#' @export
+nfi_results_data <- function(
+  conn,
+  nfi = c('nfi_2', 'nfi_3', 'nfi_4', 'nfi_2_nfi_3', 'nfi_3_nfi_4'),
+  functional_group = "none",
+  diameter_classes = FALSE,
+  .collect = TRUE
+) {
+
+  # nfi version
+  nfi <- switch(
+    nfi,
+    'nfi_2' = 'NFI_2',
+    'nfi_3' = 'NFI_3',
+    'nfi_4' = 'NFI_4',
+    'nfi_2_nfi_3' = 'COMP_NFI2_NFI3',
+    'nfi_3_nfi_4' = 'COMP_NFI3_NFI4'
+  )
+
+  # diameter classes switch
+  if (isTRUE(diameter_classes)) {
+    dc <- 'DIAMCLASS_'
+  } else {
+    dc <- ''
+  }
+
+  # functional group
+  functional_group <- switch(
+    functional_group,
+    none = 'PLOT',
+    species = 'SPECIES',
+    simplified_species = 'SIMPSPECIES',
+    genus = 'GENUS',
+    dec = 'DEC',
+    bc = 'BC',
+    parcela = 'parcela'
+  )
+
+  # table name
+  table_name <- glue::glue(
+    "{functional_group}_{nfi}_{dc}RESULTS"
+  )
+
+  # collect?
+  if (isTRUE(.collect)) {
+    tbl(conn, table_name) %>% collect()
+  } else {
+    tbl(conn, table_name)
+  }
+
+}
