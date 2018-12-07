@@ -1,0 +1,42 @@
+#' Creating a connection to the NFI SQL database
+#'
+#' Wrapper of \code{\link{dbPool}} to connect to the NFI database
+#'
+#' By default (no arguments supplied) it allows to access as a guest to the
+#' database
+#'
+#' @param user character with database user, default to "guest"
+#' @param password character woth the user password, default to "guest"
+#' @param dbname character with the database address
+#' @param idleTimeout Idle time in seconds before the connection expires
+#'
+#' @export
+nfi_connect <- function(
+  user = 'guest',
+  password = 'guest',
+  dbname = 'tururu',
+  idleTimeout = 3600000
+) {
+  db_conn <- pool::dbPool(
+    drv = RPostgreSQL::PostgreSQL(),
+    user = user,
+    password = password,
+    dbname = dbname,
+    idleTimeout = idleTimeout
+  )
+
+  return(db_conn)
+}
+
+#' Closing connection to the NFI SQL database
+#'
+#' Wrapper of \code{\link{poolClose}} to close the connection
+#'
+#' @param conn
+#'
+#' @export
+nfi_close <- function(
+  conn
+) {
+  pool::poolClose(conn)
+}

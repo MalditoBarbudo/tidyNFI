@@ -1,0 +1,16 @@
+Package: tidyNFI
+Type: Package
+Title: Tidy access to the National Forest Inventory data for Catalonia
+Version: 0.0.0.9000
+Author: Víctor Granda
+Maintainer: Víctor Granda <victorgrandagarcia@gmail.com>
+Description: This package aims to easier the access to the National Forest
+  Inventory data for the Catalonia area. Data is provided by the CTFC and CREAF
+  research centers, based on the raw data provided by the XXXX Ministery of the
+  Spanish government.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+Imports: pool,
+    RPostgreSQL
