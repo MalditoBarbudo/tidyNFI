@@ -3,3 +3,4 @@
 export(nfi_close)
 export(nfi_connect)
 export(nfi_results_data)
+export(nfi_results_filter)

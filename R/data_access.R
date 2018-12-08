@@ -127,9 +127,23 @@ nfi_results_data <- function(
 
 }
 
-nfi_filter_results <- function(
+#' Filter the nfi_results table
+#'
+#' Filter the results table by vars in the PLOTS and PLOTS_DYNAMIC tables as
+#' well as by columns in the data itself
+#'
+#' @param nfi_data tbl from \code{\link{nfi_results_data}}
+#' @param variables character vector with the variables to filter by
+#' @param conn pool connection to the database
+#' @param ... Filter expressions, in the same order as \code{variables} argument
+#' @param .collect Logical indicating if the tbl must be collected locally.
+#'   Default to TRUE
+#'
+#' @export
+nfi_results_filter <- function(
   nfi_data,
   variables,
+  conn,
   ...,
   .collect = TRUE
 ) {
@@ -138,10 +152,47 @@ nfi_filter_results <- function(
   dots <- quos(...)
 
   # var dispatching
-  PLOTS_vars <- vars_in_PLOTS(variables)
-  PLOTS_DYNAMIC_vars <- var_in_PLOTS_DYNAMIC(variables, attr(nfi_data, 'nfi'))
-  data_vars <- variables[which(variables %in% names(nfi_data))]
+  PLOTS_fil_index <- vars_in_PLOTS(variables, conn)
+  PLOTS_DYNAMIC_fil_index <- var_in_PLOTS_DYNAMIC(
+    variables, attr(nfi_data, 'nfi'), conn
+  )
+  data_fil_index <- which(variables %in% names(nfi_data))
 
-  #???
+  # filters
+  dplyr::tbl(conn, 'PLOTS') %>%
+    dplyr::filter(!!! dots[PLOTS_fil_index]) %>%
+    dplyr::select(plot_id) -> PLOTS_plots
+
+  dplyr::tbl(conn, glue::glue("PLOTS_{attr(nfi_data, 'nfi')}_DYNAMIC_INFO")) %>%
+    dplyr::filter(!!! dots[PLOTS_DYNAMIC_fil_index]) %>%
+    dplyr::select(plot_id) -> PLOTS_DYNAMIC_plots
+
+
+  # if data is collected, we need to collect also the plots and plots_dynamic
+  # before joining
+  if (any(class(nfi_data) == 'tbl_df')) {
+    PLOTS_plots <- collect(PLOTS_plots)
+    PLOTS_DYNAMIC_plots <- collect(PLOTS_DYNAMIC_plots)
+  }
+
+  # inner joins to get only the records wanted
+  nfi_data %>%
+    dplyr::filter(!!! dots[data_fil_index]) %>%
+    dplyr::inner_join(PLOTS_plots, by = 'plot_id') %>%
+    dplyr::inner_join(PLOTS_DYNAMIC_plots, by = 'plot_id') -> res
+
+  if (!isTRUE(.collect)) {
+    if (any(class(nfi_data) == 'tbl_df')) {
+      warning(
+        ".collect set to FALSE, but nfi_data already collected. Returning collected filter results"
+      )
+    }
+  }
+
+  if (isTRUE(.collect) & any(class(nfi_data) == 'tbl_sql')) {
+    res <- collect(res)
+  }
+
+  return(res)
 
 }
