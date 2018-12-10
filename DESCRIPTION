@@ -15,5 +15,6 @@ RoxygenNote: 6.1.0
 Imports: pool,
     RPostgreSQL,
     dplyr,
-    glue
+    glue,
+    rlang
 Suggests: testthat

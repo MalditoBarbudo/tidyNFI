@@ -19,35 +19,61 @@ test_that("vars_in_PLOTS helper works", {
   )
 })
 
-test_that("var_in_PLOTS_DYNAMIC helper works", {
+test_that("vars_in_PLOTS_DYNAMIC helper works", {
   expect_length(
-    tidyNFI:::var_in_PLOTS_DYNAMIC(
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(
       c('genus_id', 'basal_area', 'feat_sampling_year'), 'NFI_3', conn
     ),
     1
   )
   expect_length(
-    tidyNFI:::var_in_PLOTS_DYNAMIC(c('genus_id', 'basal_area'), 'NFI_3', conn),
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(c('genus_id', 'basal_area'), 'NFI_3', conn),
     0
   )
   expect_length(
-    tidyNFI:::var_in_PLOTS_DYNAMIC(
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(
       c('genus_id', 'basal_area', 'admin_province', 'feat_sampling_year'),
       'NFI_3', conn
     ),
     1
   )
   expect_length(
-    tidyNFI:::var_in_PLOTS_DYNAMIC(
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(
       c('genus_id', 'basal_area', 'feat_sampling_year'), 'COMP_NFI3_NFI4', conn
     ),
     0
   )
   expect_warning(
-    tidyNFI:::var_in_PLOTS_DYNAMIC(
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(
       c('genus_id', 'basal_area', 'feat_sampling_year'), 'COMP_NFI3_NFI4', conn
     ),
     "Comparision tables can not be filtered by variables from nfi dynamic info tables"
+  )
+})
+
+test_that("vars_in_nfi_data works", {
+  nfi_data_collected <- nfi_results_data(conn, 'nfi_4', 'genus', FALSE, TRUE)
+  nfi_data_nocollected <- nfi_results_data(conn, 'nfi_4', 'genus', FALSE, FALSE)
+
+  expect_length(
+    tidyNFI:::vars_in_nfi_data(
+      c('genus_id', 'basal_area', 'feat_sampling_year'), nfi_data_collected
+    ),
+    2
+  )
+  expect_length(
+    tidyNFI:::vars_in_nfi_data(c('feat_sampling_year'), nfi_data_collected),
+    0
+  )
+  expect_length(
+    tidyNFI:::vars_in_nfi_data(
+      c('genus_id', 'basal_area', 'feat_sampling_year'), nfi_data_nocollected
+    ),
+    2
+  )
+  expect_length(
+    tidyNFI:::vars_in_nfi_data(c('feat_sampling_year'), nfi_data_nocollected),
+    0
   )
 })
 
