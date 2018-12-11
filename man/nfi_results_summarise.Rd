@@ -29,9 +29,6 @@ Default to TRUE}
 \description{
 Summarise the data by polygon groups and functional groups (if any)
 }
-\details{
-turururururur
-}
 \section{Functional groups}{
 
 \code{functional_group} parameter allows to retrieve the table of plots

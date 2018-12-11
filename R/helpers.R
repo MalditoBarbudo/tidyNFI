@@ -114,3 +114,26 @@ nif_get_scenario <- function(viz_shape, agg_level) {
   return(scenario)
 }
 
+#' Custom polygon filter expression builder
+#'
+#' @param conn pool object with the database connection
+#' @param custom_polygon polygon object as the one returned by the leaflet plugin
+custom_polygon_filter_expr <- function(conn, custom_polygon) {
+
+  ### TODO convert this into a function, and then, this one can accept spatialpolygons
+  ### objects to make it general ;)
+  tmp <- custom_polygon[['geometry']][['coordinates']] %>%
+    purrr::flatten() %>%
+    purrr::set_names(nm = 1:length(.)) %>%
+    purrr::modify_depth(1, purrr::set_names, nm = c('long', 'lat')) %>%
+    dplyr::bind_rows() %>%
+    sp::Polygon() %>%
+    sp::SpatialPolygons(list(sp::Polygons(list(.), 'custom_polygon')))
+
+  dpyr::tbl(conn, 'PLOTS') %>%
+    dplyr::select(coords_longitude, coords_latitude) %>%
+    sp::SpatialPoints() %>%
+    sp::over(tmp) %>%
+
+
+}

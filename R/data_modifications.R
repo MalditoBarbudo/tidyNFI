@@ -72,8 +72,6 @@ nfi_results_filter <- function(
 #'
 #' Summarise the data by polygon groups and functional groups (if any)
 #'
-#' turururururur
-#'
 #' @section Functional groups:
 #' \code{functional_group} parameter allows to retrieve the table of plots
 #'   broken down by the desired group. Allowed values are:

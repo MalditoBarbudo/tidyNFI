@@ -16,5 +16,7 @@ Imports: pool,
     RPostgreSQL,
     dplyr,
     glue,
-    rlang
+    rlang,
+    purrr,
+    sp
 Suggests: testthat
