@@ -18,5 +18,7 @@ Imports: pool,
     glue,
     rlang,
     purrr,
-    sp
+    sp,
+    sf,
+    magrittr
 Suggests: testthat
