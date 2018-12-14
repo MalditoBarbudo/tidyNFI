@@ -81,11 +81,11 @@ nfi_results_data <- function(
   # nfi version
   nfi <- switch(
     nfi,
-    'nfi_2' = 'NFI_2',
-    'nfi_3' = 'NFI_3',
-    'nfi_4' = 'NFI_4',
-    'nfi_2_nfi_3' = 'COMP_NFI2_NFI3',
-    'nfi_3_nfi_4' = 'COMP_NFI3_NFI4'
+    nfi_2 = 'NFI_2',
+    nfi_3 = 'NFI_3',
+    nfi_4 = 'NFI_4',
+    nfi_2_nfi_3 = 'COMP_NFI2_NFI3',
+    nfi_3_nfi_4 = 'COMP_NFI3_NFI4'
   )
 
   # diameter classes switch
@@ -104,7 +104,7 @@ nfi_results_data <- function(
     genus = 'GENUS',
     dec = 'DEC',
     bc = 'BC',
-    parcela = 'parcela'
+    plot = 'PLOT'
   )
 
   # table name

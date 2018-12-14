@@ -5,9 +5,9 @@
 \title{Summarise the nfi results data (raw or filtered)}
 \usage{
 nfi_results_summarise(nfi_data, polygon_group, functional_group = "none",
-  diameter_classes, .funs = dplyr::funs(mean = mean(., na.rm = TRUE), sd =
-  sd(., na.rm = TRUE), min = min(., na.rm = TRUE), max = max(., na.rm = TRUE)),
-  .collect = TRUE)
+  diameter_classes, conn, .funs = dplyr::funs(mean = mean(., na.rm = TRUE), sd
+  = sd(., na.rm = TRUE), min = min(., na.rm = TRUE), max = max(., na.rm =
+  TRUE)), .collect = TRUE)
 }
 \arguments{
 \item{nfi_data}{tbl from \code{\link{nfi_results_data}} or
@@ -19,6 +19,8 @@ nfi_results_summarise(nfi_data, polygon_group, functional_group = "none",
 (no functional group). See details for more information}
 
 \item{diameter_classes}{Logical indicating if the table contains diameter classes}
+
+\item{conn}{pool connection to the database}
 
 \item{.funs}{functions list (as obtained from \code{\link[dplyr]{funs}}) with the
 summarise functions}

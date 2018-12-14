@@ -90,6 +90,7 @@ nfi_results_filter <- function(
 #' @param functional_group Functional group to retrieve table for. Default to 'none'
 #'   (no functional group). See details for more information
 #' @param diameter_classes Logical indicating if the table contains diameter classes
+#' @param conn pool connection to the database
 #' @param .funs functions list (as obtained from \code{\link[dplyr]{funs}}) with the
 #'   summarise functions
 #' @param .collect Logical indicating if the tbl must be collected locally.
@@ -99,7 +100,7 @@ nfi_results_filter <- function(
 #'
 #' @export
 nfi_results_summarise <- function(
-  nfi_data, polygon_group, functional_group = 'none', diameter_classes,
+  nfi_data, polygon_group, functional_group = 'none', diameter_classes, conn,
   .funs = dplyr::funs(
     mean = mean(., na.rm = TRUE),
     sd = sd(., na.rm = TRUE),
@@ -108,6 +109,47 @@ nfi_results_summarise <- function(
   ),
   .collect = TRUE
 ) {
+
+  # functional group
+  functional_group <- switch(
+    functional_group,
+    none = 'none',
+    species = 'species_id',
+    simplified_species = 'simpspecies_id',
+    genus = 'genus_id',
+    dec = 'dec_id',
+    bc = 'bc_id'
+  )
+
+  # polygon_group
+  polygon_group <- switch(
+    polygon_group,
+    province = 'admin_province',
+    region = 'admin_region',
+    vegueria = 'admin_vegueria',
+    municipality = 'admin_municipality',
+    natural_interest_area = 'admin_natural_interest_area',
+    special_protection_natural_area = 'admin_special_protection_natural_area',
+    natura_network_2000 = 'admin_natura_network_2000'
+  )
+
+  # preparing the data, as the admin variables are not in the results tables
+  if (any(class(nfi_data) == 'tbl_df')) {
+    nfi_data <- nfi_data %>%
+      dplyr::left_join(
+        dplyr::tbl(conn, 'PLOTS') %>%
+          dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
+          dplyr::collect(),
+        by = 'plot_id'
+      )
+  } else {
+    nfi_data <- nfi_data %>%
+      dplyr::left_join(
+        dplyr::tbl(conn, 'PLOTS') %>%
+          dplyr::select(plot_id, !!rlang::sym(polygon_group)),
+        by = 'plot_id'
+      )
+  }
 
   # preparing the grouping vars
   if (functional_group == 'none') {functional_group <- ''}
