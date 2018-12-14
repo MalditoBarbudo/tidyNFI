@@ -118,7 +118,8 @@ nfi_results_summarise <- function(
     simplified_species = 'simpspecies_id',
     genus = 'genus_id',
     dec = 'dec_id',
-    bc = 'bc_id'
+    bc = 'bc_id',
+    plot = 'none'
   )
 
   # polygon_group
