@@ -10,6 +10,8 @@
 #' @param dbname character with the database address
 #' @param idleTimeout Idle time in seconds before the connection expires
 #'
+#' @importFrom magrittr %>%
+#'
 #' @export
 nfi_connect <- function(
   user = 'guest',

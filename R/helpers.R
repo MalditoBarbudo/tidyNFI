@@ -84,27 +84,28 @@ vars_in_nfi_data <- function(variables, nfi_data) {
 #'
 #' @param viz_shape The shape to visualize, plots or polygons
 #' @param agg_level The breakdown level, none, species...
-nif_get_scenario <- function(viz_shape, agg_level) {
+nfi_get_scenario <- function(viz_shape, agg_level) {
 
   agg_level <- switch(
     agg_level,
-    none = 'PLOT',
-    species = 'SPECIES',
-    simpspecies = 'SIMPSPECIES',
-    genus = 'GENUS',
-    dec = 'DEC',
-    bc = 'BC'
+    none = 'plot',
+    plot = 'plot',
+    species = 'species',
+    simpspecies = 'simpspecies',
+    genus = 'genus',
+    dec = 'dec',
+    bc = 'dec'
   )
 
   # plot shape
   if (viz_shape == 'plot') {
-    if (agg_level == 'none') {
+    if (agg_level == 'plot') {
       scenario <- 'scenario1'
     } else {
       scenario <- 'scenario2'
     }
   } else {
-    if (agg_level == 'none') {
+    if (agg_level == 'plot') {
       scenario <- 'scenario3'
     } else {
       scenario <- 'scenario4'
@@ -135,6 +136,10 @@ custom_poly_to_sf <- function(custom_polygon) {
 #' @param conn pool object with the database connection
 #' @param custom_polygon sf or sp object with the custom polygon to filter plots by
 custom_polygon_filter_expr <- function(custom_polygon, conn) {
+
+  if (is.null(custom_polygon)) {
+    return(rlang::quo())
+  }
 
   # if sp, then to sf
   if (class(custom_polygon) == 'Polygons') {
