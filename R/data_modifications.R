@@ -34,23 +34,30 @@ nfi_results_filter <- function(
     dplyr::filter(!!! dots[PLOTS_fil_index]) %>%
     dplyr::select(plot_id) -> PLOTS_plots
 
-  dplyr::tbl(conn, glue::glue("PLOTS_{attr(nfi_data, 'nfi')}_DYNAMIC_INFO")) %>%
-    dplyr::filter(!!! dots[PLOTS_DYNAMIC_fil_index]) %>%
-    dplyr::select(plot_id) -> PLOTS_DYNAMIC_plots
-
+  if (!(attr(nfi_data, 'nfi') %in% c('COMP_NFI2_NFI3', 'COMP_NFI3_NFI4'))) {
+    dplyr::tbl(conn, glue::glue("PLOTS_{attr(nfi_data, 'nfi')}_DYNAMIC_INFO")) %>%
+      dplyr::filter(!!! dots[PLOTS_DYNAMIC_fil_index]) %>%
+      dplyr::select(plot_id) -> PLOTS_DYNAMIC_plots
+  }
 
   # if data is collected, we need to collect also the plots and plots_dynamic
   # before joining
   if (any(class(nfi_data) == 'tbl_df')) {
     PLOTS_plots <- dplyr::collect(PLOTS_plots)
-    PLOTS_DYNAMIC_plots <- dplyr::collect(PLOTS_DYNAMIC_plots)
+    if (!(attr(nfi_data, 'nfi') %in% c('COMP_NFI2_NFI3', 'COMP_NFI3_NFI4'))) {
+      PLOTS_DYNAMIC_plots <- dplyr::collect(PLOTS_DYNAMIC_plots)
+    }
   }
 
   # inner joins to get only the records wanted
   nfi_data %>%
     dplyr::filter(!!! dots[data_fil_index]) %>%
-    dplyr::inner_join(PLOTS_plots, by = 'plot_id') %>%
-    dplyr::inner_join(PLOTS_DYNAMIC_plots, by = 'plot_id') -> res
+    dplyr::inner_join(PLOTS_plots, by = 'plot_id') -> res
+
+  if (!(attr(nfi_data, 'nfi') %in% c('COMP_NFI2_NFI3', 'COMP_NFI3_NFI4'))) {
+    res <- res %>%
+      dplyr::inner_join(PLOTS_DYNAMIC_plots, by = 'plot_id')
+  }
 
   if (!isTRUE(.collect)) {
     if (any(class(nfi_data) == 'tbl_df')) {

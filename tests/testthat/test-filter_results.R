@@ -137,4 +137,31 @@ test_that("filter no collected works", {
   )
 })
 
+test_that("filter with comparision data works", {
+  nfi_data_collected <- nfi_results_data(conn, 'nfi_3_nfi_4', 'genus', FALSE, TRUE)
+  nfi_data_nocollected <- nfi_results_data(conn, 'nfi_2_nfi_3', 'genus', FALSE, FALSE)
+
+  expect_s3_class(
+    nfi_results_filter(
+      nfi_data_collected,
+      variables = c('genus_id', 'density_inc', 'admin_province'),
+      conn = conn,
+      genus_id == 'Pinus', density_inc > 15, admin_province == 'Barcelona',
+    ),
+    'tbl_df'
+  )
+
+  expect_s3_class(
+    nfi_results_filter(
+      nfi_data_nocollected,
+      variables = c('genus_id', 'density_inc', 'admin_province'),
+      conn = conn,
+      genus_id == 'Pinus', density_inc > 15, admin_province == 'Barcelona',
+      .collect = FALSE
+    ),
+    'tbl_sql'
+  )
+
+})
+
 nfi_close(conn)
