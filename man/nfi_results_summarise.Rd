@@ -5,9 +5,9 @@
 \title{Summarise the nfi results data (raw or filtered)}
 \usage{
 nfi_results_summarise(nfi_data, polygon_group, functional_group = "none",
-  diameter_classes, conn, .funs = dplyr::funs(mean = mean(., na.rm = TRUE), sd
-  = sd(., na.rm = TRUE), min = min(., na.rm = TRUE), max = max(., na.rm =
-  TRUE)), .collect = TRUE)
+  diameter_classes, conn, .funs = dplyr::funs(mean = mean(., na.rm =
+  TRUE), sd = sd(., na.rm = TRUE), min = min(., na.rm = TRUE), max = max(.,
+  na.rm = TRUE)), .collect = TRUE)
 }
 \arguments{
 \item{nfi_data}{tbl from \code{\link{nfi_results_data}} or

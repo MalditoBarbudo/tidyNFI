@@ -96,9 +96,36 @@ test_that("summarise no collected works", {
 
   expect_s3_class(
     nfi_results_summarise(
-      data_fil_genus, polygon_group = 'province', functional_group = 'genus',
+      data_fil_genus, polygon_group = 'aut_community', functional_group = 'genus',
       diameter_classes = FALSE, conn = conn, .collect = FALSE
     ), 'tbl_sql'
+  )
+})
+
+test_that('summarise when admin data is already there works', {
+  data <- nfi_results_data(conn, 'nfi_3', .collect = FALSE) %>%
+    dplyr::left_join(
+      dplyr::tbl(conn, 'PLOTS') %>% dplyr::select(plot_id, dplyr::starts_with('admin_'))
+    )
+
+  data_coll <- nfi_results_data(conn, 'nfi_3', .collect = TRUE) %>%
+    dplyr::left_join(
+      dplyr::tbl(conn, 'PLOTS') %>% dplyr::select(plot_id, dplyr::starts_with('admin_')) %>%
+        dplyr::collect()
+    )
+
+  expect_s3_class(
+    nfi_results_summarise(
+      data, polygon_group = 'province', diameter_classes = FALSE, conn = conn,
+      .collect = FALSE
+    ), 'tbl_sql'
+  )
+
+  expect_s3_class(
+    nfi_results_summarise(
+      data_coll, polygon_group = 'province', diameter_classes = FALSE, conn = conn,
+      .collect = TRUE
+    ), 'tbl_df'
   )
 })
 
