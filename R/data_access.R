@@ -55,7 +55,7 @@ nfi_close <- function(
 #'   \itemize{
 #'     \item{\code{"none"} (No breakdown)}
 #'     \item{\code{"species"}}
-#'     \item{\code{"simplified_species"}}
+#'     \item{\code{"simpspecies"}}
 #'     \item{\code{"genus"}}
 #'     \item{\code{"dec"} (Deciduous/Esclerophyllous/Conifer)}
 #'     \item{\code{"bc"} (Broadleaf/Conifer)}
@@ -102,7 +102,7 @@ nfi_results_data <- function(
     functional_group,
     none = 'PLOT',
     species = 'SPECIES',
-    simplified_species = 'SIMPSPECIES',
+    simpspecies = 'SIMPSPECIES',
     genus = 'GENUS',
     dec = 'DEC',
     bc = 'BC',

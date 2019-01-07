@@ -38,7 +38,7 @@ Summarise the data by polygon groups and functional groups (if any)
   \itemize{
     \item{\code{"none"} (No breakdown)}
     \item{\code{"species"}}
-    \item{\code{"simplified_species"}}
+    \item{\code{"simpspecies"}}
     \item{\code{"genus"}}
     \item{\code{"dec"} (Deciduous/Esclerophyllous/Conifer)}
     \item{\code{"bc"} (Broadleaf/Conifer)}

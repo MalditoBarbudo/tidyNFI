@@ -85,7 +85,7 @@ nfi_results_filter <- function(
 #'   \itemize{
 #'     \item{\code{"none"} (No breakdown)}
 #'     \item{\code{"species"}}
-#'     \item{\code{"simplified_species"}}
+#'     \item{\code{"simpspecies"}}
 #'     \item{\code{"genus"}}
 #'     \item{\code{"dec"} (Deciduous/Esclerophyllous/Conifer)}
 #'     \item{\code{"bc"} (Broadleaf/Conifer)}
@@ -122,7 +122,7 @@ nfi_results_summarise <- function(
     functional_group,
     none = 'none',
     species = 'species_id',
-    simplified_species = 'simpspecies_id',
+    simpspecies = 'simpspecies_id',
     genus = 'genus_id',
     dec = 'dec_id',
     bc = 'bc_id',

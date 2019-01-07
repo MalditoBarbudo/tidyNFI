@@ -36,7 +36,7 @@ Data is retrieved from the postgreSQL db in tbl form
   \itemize{
     \item{\code{"none"} (No breakdown)}
     \item{\code{"species"}}
-    \item{\code{"simplified_species"}}
+    \item{\code{"simpspecies"}}
     \item{\code{"genus"}}
     \item{\code{"dec"} (Deciduous/Esclerophyllous/Conifer)}
     \item{\code{"bc"} (Broadleaf/Conifer)}

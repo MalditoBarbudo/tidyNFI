@@ -44,12 +44,33 @@ test_that("species level works", {
   )
 })
 
+test_that("simpspecies level works", {
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3', 'simpspecies', FALSE, .collect = TRUE), 'tbl_df'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3', 'simpspecies', FALSE, .collect = FALSE), 'tbl_sql'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_4', 'simpspecies', FALSE, .collect = TRUE), 'tbl_df'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_4', 'simpspecies', FALSE, .collect = FALSE), 'tbl_sql'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3_nfi_4', 'simpspecies', FALSE, .collect = TRUE), 'tbl_df'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3_nfi_4', 'simpspecies', FALSE, .collect = FALSE), 'tbl_sql'
+  )
+})
+
 test_that("diamclass level works", {
   expect_s3_class(
     nfi_results_data(conn, 'nfi_3', 'genus', TRUE, .collect = FALSE), 'tbl_sql'
   )
   expect_s3_class(
-    nfi_results_data(conn, 'nfi_3', 'simplified_species', TRUE, .collect = FALSE), 'tbl_sql'
+    nfi_results_data(conn, 'nfi_3', 'simpspecies', TRUE, .collect = FALSE), 'tbl_sql'
   )
   expect_s3_class(
     nfi_results_data(conn, 'nfi_2', 'dec', TRUE, .collect = FALSE), 'tbl_sql'
