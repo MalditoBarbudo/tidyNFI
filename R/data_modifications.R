@@ -134,22 +134,26 @@ nfi_results_summarise <- function(
     natura_network_2000 = 'admin_natura_network_2000'
   )
 
-  # preparing the data, as the admin variables are not in the results tables
+  # preparing the data, if the admin variables are not in the data, lets join them
   if (any(class(nfi_data) == 'tbl_df')) {
-    nfi_data <- nfi_data %>%
-      dplyr::left_join(
-        dplyr::tbl(conn, 'PLOTS') %>%
-          dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
-          dplyr::collect(),
-        by = 'plot_id'
-      )
+    if (!(polygon_group %in% names(nfi_data))) {
+      nfi_data <- nfi_data %>%
+        dplyr::left_join(
+          dplyr::tbl(conn, 'PLOTS') %>%
+            dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
+            dplyr::collect(),
+          by = 'plot_id'
+        )
+    }
   } else {
-    nfi_data <- nfi_data %>%
-      dplyr::left_join(
-        dplyr::tbl(conn, 'PLOTS') %>%
-          dplyr::select(plot_id, !!rlang::sym(polygon_group)),
-        by = 'plot_id'
-      )
+    if (!(polygon_group %in% (nfi_data %>% head(1) %>% dplyr::collect() %>% names()))) {
+      nfi_data <- nfi_data %>%
+        dplyr::left_join(
+          dplyr::tbl(conn, 'PLOTS') %>%
+            dplyr::select(plot_id, !!rlang::sym(polygon_group)),
+          by = 'plot_id'
+        )
+    }
   }
 
   # preparing the grouping vars
