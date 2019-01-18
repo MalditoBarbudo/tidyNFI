@@ -104,15 +104,17 @@ nfi_results_filter <- function(
 #'   Default to TRUE
 #'
 #' @importFrom stats sd quantile
+#' @importFrom dplyr n
 #'
 #' @export
 nfi_results_summarise <- function(
   nfi_data, polygon_group, functional_group = 'none', diameter_classes, conn,
   .funs = dplyr::funs(
     mean = mean(., na.rm = TRUE),
-    sd = sd(., na.rm = TRUE),
+    se = sd(., na.rm = TRUE)/sqrt(n()),
     min = min(., na.rm = TRUE),
-    max = max(., na.rm = TRUE)
+    max = max(., na.rm = TRUE),
+    n = n()
   ),
   .collect = TRUE
 ) {

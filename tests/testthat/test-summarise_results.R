@@ -21,7 +21,7 @@ test_that("summarise collected works", {
   expect_equal(
     nfi_results_summarise(
       data, polygon_group = 'province', diameter_classes = FALSE, conn = conn
-    ) %>% nrow(), 5
+    ) %>% nrow(), 4
   )
 
   expect_s3_class(
