@@ -86,12 +86,39 @@ test_that("diamclass level works", {
   )
 })
 
+test_that("shrubs and regeneration tables works", {
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_2_shrub', .collect = FALSE), 'tbl_sql'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3_shrub', .collect = FALSE), 'tbl_sql'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_4_shrub', .collect = FALSE), 'tbl_sql'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_2_regen', .collect = TRUE), 'tbl_df'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_3_regen', .collect = TRUE), 'tbl_df'
+  )
+  expect_s3_class(
+    nfi_results_data(conn, 'nfi_4_regen', .collect = TRUE), 'tbl_df'
+  )
+})
+
 test_that("attribute is set", {
   expect_identical(
     attr(nfi_results_data(conn, 'nfi_3', 'genus', FALSE, .collect = FALSE), 'nfi'), 'NFI_3'
   )
   expect_identical(
     attr(nfi_results_data(conn, 'nfi_2', 'genus', FALSE, .collect = TRUE), 'nfi'), 'NFI_2'
+  )
+  expect_identical(
+    attr(nfi_results_data(conn, 'nfi_2_shrub', .collect = TRUE), 'nfi'), 'SHRUB_NFI_2_INFO'
+  )
+  expect_identical(
+    attr(nfi_results_data(conn, 'nfi_2_regen', .collect = TRUE), 'nfi'), 'REGENERATION_NFI_2'
   )
   # expect_false(
   #   attr(nfi_results_data(conn, 'nfi_3', 'genus', FALSE, .collect = FALSE), 'diamclass')

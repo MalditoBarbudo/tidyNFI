@@ -49,6 +49,14 @@ test_that("vars_in_PLOTS_DYNAMIC helper works", {
     ),
     "Comparision tables can not be filtered by variables from nfi dynamic info tables"
   )
+
+  expect_length(
+    tidyNFI:::vars_in_PLOTS_DYNAMIC(
+      c('genus_id', 'basal_area', 'admin_province', 'feat_sampling_year'),
+      'SHRUB_NFI_3_INFO', conn
+    ),
+    1
+  )
 })
 
 test_that("vars_in_nfi_data works", {

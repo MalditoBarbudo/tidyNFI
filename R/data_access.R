@@ -74,7 +74,12 @@ nfi_close <- function(
 #' @export
 nfi_results_data <- function(
   conn,
-  nfi = c('nfi_2', 'nfi_3', 'nfi_4', 'nfi_2_nfi_3', 'nfi_3_nfi_4'),
+  nfi = c(
+    'nfi_2', 'nfi_3', 'nfi_4',
+    'nfi_2_nfi_3', 'nfi_3_nfi_4',
+    'nfi_2_shrub', 'nfi_3_shrub', 'nfi_4_shrub',
+    'nfi_2_regen', 'nfi_3_regen', 'nfi_4_regen'
+  ),
   functional_group = "none",
   diameter_classes = FALSE,
   .collect = TRUE
@@ -87,38 +92,54 @@ nfi_results_data <- function(
     nfi_3 = 'NFI_3',
     nfi_4 = 'NFI_4',
     nfi_2_nfi_3 = 'COMP_NFI2_NFI3',
-    nfi_3_nfi_4 = 'COMP_NFI3_NFI4'
+    nfi_3_nfi_4 = 'COMP_NFI3_NFI4',
+    nfi_2_shrub = 'SHRUB_NFI_2_INFO',
+    nfi_3_shrub = 'SHRUB_NFI_3_INFO',
+    nfi_4_shrub = 'SHRUB_NFI_4_INFO',
+    nfi_2_regen = 'REGENERATION_NFI_2',
+    nfi_3_regen = 'REGENERATION_NFI_3',
+    nfi_4_regen = 'REGENERATION_NFI_4'
   )
 
-  # diameter classes switch
-  if (isTRUE(diameter_classes)) {
-    dc <- 'DIAMCLASS_'
+  # shrub and regeneration are independent of anything else
+  if (nfi %in% c(
+    'SHRUB_NFI_2_INFO', 'SHRUB_NFI_3_INFO', 'SHRUB_NFI_4_INFO',
+    'REGENERATION_NFI_2', 'REGENERATION_NFI_3', 'REGENERATION_NFI_4'
+  )) {
+    table_name <- nfi
+    res <- dplyr::tbl(conn, table_name)
   } else {
-    dc <- ''
-  }
+    # the other tables follows the natural way (diam classes, functional group...)
+    # diameter classes switch
+    if (isTRUE(diameter_classes)) {
+      dc <- 'DIAMCLASS_'
+    } else {
+      dc <- ''
+    }
 
-  # functional group
-  functional_group <- switch(
-    functional_group,
-    none = 'PLOT',
-    species = 'SPECIES',
-    simpspecies = 'SIMPSPECIES',
-    genus = 'GENUS',
-    dec = 'DEC',
-    bc = 'BC',
-    plot = 'PLOT'
-  )
+    # functional group
+    functional_group <- switch(
+      functional_group,
+      none = 'PLOT',
+      species = 'SPECIES',
+      simpspecies = 'SIMPSPECIES',
+      genus = 'GENUS',
+      dec = 'DEC',
+      bc = 'BC',
+      plot = 'PLOT'
+    )
 
-  # table name
-  table_name <- glue::glue(
-    "{functional_group}_{nfi}_{dc}RESULTS"
-  )
+    # table name
+    table_name <- glue::glue(
+      "{functional_group}_{nfi}_{dc}RESULTS"
+    )
 
-  res <- dplyr::tbl(conn, table_name)# %>%
+    res <- dplyr::tbl(conn, table_name)# %>%
     # dplyr::left_join(
     #   dplyr::tbl(conn, 'PLOTS') %>%
     #     dplyr::select(plot_id, dplyr::starts_with('admin_'))
     # )
+  }
 
   # collect?
   if (isTRUE(.collect)) {

@@ -34,10 +34,20 @@ nfi_results_filter <- function(
     dplyr::filter(!!! dots[PLOTS_fil_index]) %>%
     dplyr::select(plot_id) -> PLOTS_plots
 
-  if (!(attr(nfi_data, 'nfi') %in% c('COMP_NFI2_NFI3', 'COMP_NFI3_NFI4'))) {
-    dplyr::tbl(conn, glue::glue("PLOTS_{attr(nfi_data, 'nfi')}_DYNAMIC_INFO")) %>%
+  if (attr(nfi_data, 'nfi') %in% c(
+    'SHRUB_NFI_2_INFO', 'SHRUB_NFI_3_INFO', 'SHRUB_NFI_4_INFO',
+    'REGENERATION_NFI_2', 'REGENERATION_NFI_3', 'REGENERATION_NFI_4'
+  )) {
+    nfi_strip <- stringr::str_extract(attr(nfi_data, 'nfi'), 'NFI_[2-4]')
+    dplyr::tbl(conn, glue::glue("PLOTS_{nfi_strip}_DYNAMIC_INFO")) %>%
       dplyr::filter(!!! dots[PLOTS_DYNAMIC_fil_index]) %>%
       dplyr::select(plot_id) -> PLOTS_DYNAMIC_plots
+  } else {
+    if (!(attr(nfi_data, 'nfi') %in% c('COMP_NFI2_NFI3', 'COMP_NFI3_NFI4'))) {
+      dplyr::tbl(conn, glue::glue("PLOTS_{attr(nfi_data, 'nfi')}_DYNAMIC_INFO")) %>%
+        dplyr::filter(!!! dots[PLOTS_DYNAMIC_fil_index]) %>%
+        dplyr::select(plot_id) -> PLOTS_DYNAMIC_plots
+    }
   }
 
   # if data is collected, we need to collect also the plots and plots_dynamic

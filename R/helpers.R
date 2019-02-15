@@ -31,6 +31,13 @@ vars_in_PLOTS_DYNAMIC <- function(variables, nfi, conn) {
     return(numeric())
   }
 
+  if (nfi %in% c(
+    'SHRUB_NFI_2_INFO', 'SHRUB_NFI_3_INFO', 'SHRUB_NFI_4_INFO',
+    'REGENERATION_NFI_2', 'REGENERATION_NFI_3', 'REGENERATION_NFI_4'
+  )) {
+    nfi <- stringr::str_extract(nfi, 'NFI_[2-4]')
+  }
+
   res <- which(variables %in% (
     pool::dbGetQuery(
       conn, glue::glue('SELECT * FROM "PLOTS_{nfi}_DYNAMIC_INFO" LIMIT 1')
