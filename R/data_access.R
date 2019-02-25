@@ -16,7 +16,7 @@
 nfi_connect <- function(
   user = 'guest',
   password = 'guest',
-  dbname = 'nfiDB',
+  dbname = 'tururu',
   idleTimeout = 3600000
 ) {
   db_conn <- pool::dbPool(
