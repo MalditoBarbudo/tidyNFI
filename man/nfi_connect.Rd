@@ -4,7 +4,7 @@
 \alias{nfi_connect}
 \title{Creating a connection to the NFI SQL database}
 \usage{
-nfi_connect(user = "guest", password = "guest", dbname = "tururu",
+nfi_connect(user = "guest", password = "guest", dbname = "nfiDB",
   idleTimeout = 3600000)
 }
 \arguments{
