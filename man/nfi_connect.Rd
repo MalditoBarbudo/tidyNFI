@@ -5,7 +5,7 @@
 \title{Creating a connection to the NFI SQL database}
 \usage{
 nfi_connect(user = "guest", password = "guest", dbname = "tururu",
-  idleTimeout = 3600000)
+  idleTimeout = 3600000, host = NULL, port = NULL)
 }
 \arguments{
 \item{user}{character with database user, default to "guest"}

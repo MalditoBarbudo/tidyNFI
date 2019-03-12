@@ -17,14 +17,18 @@ nfi_connect <- function(
   user = 'guest',
   password = 'guest',
   dbname = 'tururu',
-  idleTimeout = 3600000
+  idleTimeout = 3600000,
+  host = NULL,
+  port = NULL
 ) {
   db_conn <- pool::dbPool(
     drv = RPostgreSQL::PostgreSQL(),
     user = user,
     password = password,
     dbname = dbname,
-    idleTimeout = idleTimeout
+    idleTimeout = idleTimeout,
+    host = host,
+    port = port
   )
 
   return(db_conn)
