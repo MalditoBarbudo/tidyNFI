@@ -13,9 +13,12 @@ test_that("summarise collected works", {
   data_fil_genus <- nfi_results_data(conn, 'nfi_4', 'genus') %>%
     nfi_results_filter(c('basal_area'), conn, basal_area > 15)
 
+  data_dc <- nfi_results_data(conn, 'nfi_3', diameter_classes = TRUE)
+
   expect_s3_class(
     nfi_results_summarise(
-      data, polygon_group = 'province', diameter_classes = FALSE, conn = conn
+      data, polygon_group = 'province', diameter_classes = FALSE,
+      conn = conn
     ), 'tbl_df'
   )
   expect_equal(
@@ -60,6 +63,32 @@ test_that("summarise collected works", {
       diameter_classes = FALSE, conn = conn
     ) %>% nrow(), 34
   )
+
+  ## dominant variants
+  expect_s3_class(
+    nfi_results_summarise(
+      data, dominant_group = 'dec', diameter_classes = FALSE, conn = conn
+    ), 'tbl_df'
+  )
+  expect_equal(
+    nfi_results_summarise(
+      data, dominant_group = 'dec', diameter_classes = FALSE, conn = conn
+    ) %>% nrow(), 4 # usually we will expect 3 but there is a NA group so there are 4 rows
+  )
+
+  expect_s3_class(
+    nfi_results_summarise(
+      data, dominant_group = 'bc', polygon_group = 'province',
+      diameter_classes = FALSE, conn = conn
+    ), 'tbl_df'
+  )
+  expect_equal(
+    nfi_results_summarise(
+      data, dominant_group = 'bc', polygon_group = 'province',
+      diameter_classes = FALSE, conn = conn
+    ) %>% nrow(), 12 # usually we will expect 8 (4*2) but there is a NA group so there are 12 (4*3) rows
+  )
+
 })
 
 test_that("summarise no collected works", {

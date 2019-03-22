@@ -103,10 +103,13 @@ nfi_results_filter <- function(
 #'
 #' @param nfi_data tbl from \code{\link{nfi_results_data}} or
 #'   \code{\link{nfi_results_filter}}
-#' @param polygon_group character indicating the polygon group to summarise
+#' @param polygon_group character indicating the polygon group to summarise, if any.
 #' @param functional_group Functional group to retrieve table for. Default to 'none'
 #'   (no functional group). See details for more information
 #' @param diameter_classes Logical indicating if the table contains diameter classes
+#' @param dominant_group Dominant functional group to summarise data, if any.
+#' @param dominant_criteria Character with the dominancy criteria, basal area
+#'   (\code{"basal_area"}) or density (\code{"density"}). Default to density.
 #' @param conn pool connection to the database
 #' @param .funs functions list (as obtained from \code{\link[dplyr]{funs}}) with the
 #'   summarise functions
@@ -118,7 +121,9 @@ nfi_results_filter <- function(
 #'
 #' @export
 nfi_results_summarise <- function(
-  nfi_data, polygon_group, functional_group = 'none', diameter_classes, conn,
+  nfi_data, polygon_group = 'none', functional_group = 'none', diameter_classes,
+  dominant_group = 'none', dominant_criteria = "density",
+  conn,
   .funs = dplyr::funs(
     mean = mean(., na.rm = TRUE),
     se = sd(., na.rm = TRUE)/sqrt(n()),
@@ -129,21 +134,21 @@ nfi_results_summarise <- function(
   .collect = TRUE
 ) {
 
-  # functional group
-  functional_group <- switch(
-    functional_group,
-    none = 'none',
-    species = 'species_id',
-    simpspecies = 'simpspecies_id',
-    genus = 'genus_id',
-    dec = 'dec_id',
-    bc = 'bc_id',
-    plot = 'none'
+  # dominant group
+  dominant_group <- switch(
+    dominant_group,
+    none = '',
+    species = glue::glue("{dominant_criteria}_species_dominant"),
+    simpspecies = glue::glue("{dominant_criteria}_simp_species_dominant"),
+    genus = glue::glue("{dominant_criteria}_genus_dominant"),
+    dec = glue::glue("{dominant_criteria}_dec_dominant"),
+    bc = glue::glue("{dominant_criteria}_bc_dominant")
   )
 
   # polygon_group
   polygon_group <- switch(
     polygon_group,
+    none = '',
     aut_community = 'admin_aut_community',
     province = 'admin_province',
     region = 'admin_region',
@@ -154,41 +159,78 @@ nfi_results_summarise <- function(
     natura_network_2000 = 'admin_natura_network_2000'
   )
 
-  # preparing the data, if the admin variables are not in the data, lets join them
-  if (any(class(nfi_data) == 'tbl_df')) {
-    if (!(polygon_group %in% names(nfi_data))) {
-      nfi_data <- nfi_data %>%
-        dplyr::left_join(
-          dplyr::tbl(conn, 'PLOTS') %>%
-            dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
-            dplyr::collect(),
-          by = 'plot_id'
-        )
-    }
-  } else {
-    if (!(polygon_group %in% (nfi_data %>% head(1) %>% dplyr::collect() %>% names()))) {
-      nfi_data <- nfi_data %>%
-        dplyr::left_join(
-          dplyr::tbl(conn, 'PLOTS') %>%
-            dplyr::select(plot_id, !!rlang::sym(polygon_group)),
-          by = 'plot_id'
-        )
+  # functional_group
+  functional_group <- switch(
+    functional_group,
+    none = '',
+    species = 'species_id',
+    simpspecies = 'simpspecies_id',
+    genus = 'genus_id',
+    dec = 'dec_id',
+    bc = 'bc_id',
+    plot = ''
+  )
+
+  # preparing the data, if the admin variables are not in the data, lets join them,
+  # except for the none case
+  if (polygon_group != '') {
+    if (any(class(nfi_data) == 'tbl_df')) {
+      if (!(polygon_group %in% names(nfi_data))) {
+        nfi_data <- nfi_data %>%
+          dplyr::left_join(
+            dplyr::tbl(conn, 'PLOTS') %>%
+              dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
+              dplyr::collect(),
+            by = 'plot_id'
+          )
+      }
+    } else {
+      if (!(polygon_group %in% (nfi_data %>% head(1) %>% dplyr::collect() %>% names()))) {
+        nfi_data <- nfi_data %>%
+          dplyr::left_join(
+            dplyr::tbl(conn, 'PLOTS') %>%
+              dplyr::select(plot_id, !!rlang::sym(polygon_group)),
+            by = 'plot_id'
+          )
+      }
     }
   }
 
   # preparing the grouping vars
-  if (functional_group == 'none') {functional_group <- ''}
-  grouping_vars <- rlang::quos(
-    !!rlang::sym(polygon_group), !!rlang::sym(functional_group)
-  )
-
   if (isTRUE(diameter_classes)) {
-    grouping_vars <- c(grouping_vars, rlang::quo(diamclass_id))
-  }
 
-  grouping_vars <- grouping_vars[!vapply(
-    grouping_vars, rlang::quo_is_missing, logical(1)
-  )]
+    # check if there is diamclass_id var
+    if ('diamclass_id' %in% (nfi_data %>% head(1) %>% dplyr::collect() %>% names())) {
+
+      # if there is diamclass_id var, it means there is not dominant var, so check
+      # if the user have provide one
+      if (dominant_group != '') {
+        warning("when summarising by diameter classes, dominancy is ignored")
+        dominant_group <-  ''
+      }
+
+      grouping_vars <- rlang::quos(
+        !!rlang::sym(polygon_group),
+        !!rlang::sym(functional_group),
+        !!rlang::sym(dominant_group),
+        diamclass_id
+      ) %>%
+        magrittr::extract(
+          !purrr::map_lgl(., rlang::quo_is_missing)
+        )
+    } else {
+      stop("diameter_classes set to TRUE, but no diameter classes variable found")
+    }
+  } else {
+    grouping_vars <- rlang::quos(
+      !!rlang::sym(polygon_group),
+      !!rlang::sym(functional_group),
+      !!rlang::sym(dominant_group)
+    ) %>%
+      magrittr::extract(
+        !purrr::map_lgl(., rlang::quo_is_missing)
+      )
+  }
 
   # go for it
   res <- nfi_data %>%
@@ -199,7 +241,7 @@ nfi_results_summarise <- function(
   if (!isTRUE(.collect)) {
     if (any(class(nfi_data) == 'tbl_df')) {
       warning(
-        ".collect set to FALSE, but nfi_data already collected. Returning collected filter results"
+        ".collect set to FALSE, but nfi_data already collected. Returning collected summarised results"
       )
     }
   }

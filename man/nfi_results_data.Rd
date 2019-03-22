@@ -5,9 +5,10 @@
 \title{Retrieve NFI data as tbl}
 \usage{
 nfi_results_data(conn, nfi = c("nfi_2", "nfi_3", "nfi_4", "nfi_2_nfi_3",
-  "nfi_3_nfi_4", "nfi_2_shrub", "nfi_3_shrub", "nfi_4_shrub", "nfi_2_regen",
-  "nfi_3_regen", "nfi_4_regen"), functional_group = "none",
-  diameter_classes = FALSE, .collect = TRUE)
+  "nfi_3_nfi_4", "nfi_2_shrub", "nfi_3_shrub", "nfi_4_shrub",
+  "nfi_2_regen", "nfi_3_regen", "nfi_4_regen"),
+  functional_group = "none", diameter_classes = FALSE,
+  .collect = TRUE)
 }
 \arguments{
 \item{conn}{pool object to access the tables, as obtained from

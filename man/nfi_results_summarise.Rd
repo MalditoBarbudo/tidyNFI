@@ -4,21 +4,27 @@
 \alias{nfi_results_summarise}
 \title{Summarise the nfi results data (raw or filtered)}
 \usage{
-nfi_results_summarise(nfi_data, polygon_group, functional_group = "none",
-  diameter_classes, conn, .funs = dplyr::funs(mean = mean(., na.rm = TRUE), se
-  = sd(., na.rm = TRUE)/sqrt(n()), min = min(., na.rm = TRUE), max = max(.,
-  na.rm = TRUE), n = n()), .collect = TRUE)
+nfi_results_summarise(nfi_data, polygon_group = "none",
+  functional_group = "none", diameter_classes, dominant_group = "none",
+  dominant_criteria = "density", conn, .funs = dplyr::funs(mean =
+  mean(., na.rm = TRUE), se = sd(., na.rm = TRUE)/sqrt(n()), min = min(.,
+  na.rm = TRUE), max = max(., na.rm = TRUE), n = n()), .collect = TRUE)
 }
 \arguments{
 \item{nfi_data}{tbl from \code{\link{nfi_results_data}} or
 \code{\link{nfi_results_filter}}}
 
-\item{polygon_group}{character indicating the polygon group to summarise}
+\item{polygon_group}{character indicating the polygon group to summarise, if any.}
 
 \item{functional_group}{Functional group to retrieve table for. Default to 'none'
 (no functional group). See details for more information}
 
 \item{diameter_classes}{Logical indicating if the table contains diameter classes}
+
+\item{dominant_group}{Dominant functional group to summarise data, if any.}
+
+\item{dominant_criteria}{Character with the dominancy criteria, basal area
+(\code{"basal_area"}) or density (\code{"density"}). Default to density.}
 
 \item{conn}{pool connection to the database}
 
