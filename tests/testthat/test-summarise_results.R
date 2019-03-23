@@ -89,6 +89,18 @@ test_that("summarise collected works", {
     ) %>% nrow(), 12 # usually we will expect 8 (4*2) but there is a NA group so there are 12 (4*3) rows
   )
 
+  expect_error(
+    nfi_results_summarise(
+      data, dominant_group = 'bc', polygon_group = 'province',
+      diameter_classes = TRUE, conn = conn
+    )
+  )
+  expect_warning(
+    nfi_results_summarise(
+      data_dc, dominant_group = 'bc', polygon_group = 'province',
+      diameter_classes = TRUE, conn = conn
+    )
+  )
 })
 
 test_that("summarise no collected works", {
