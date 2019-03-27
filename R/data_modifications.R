@@ -139,7 +139,7 @@ nfi_results_summarise <- function(
     dominant_group,
     none = '',
     species = glue::glue("{dominant_criteria}_species_dominant"),
-    simpspecies = glue::glue("{dominant_criteria}_simp_species_dominant"),
+    simpspecies = glue::glue("{dominant_criteria}_simpspecies_dominant"),
     genus = glue::glue("{dominant_criteria}_genus_dominant"),
     dec = glue::glue("{dominant_criteria}_dec_dominant"),
     bc = glue::glue("{dominant_criteria}_bc_dominant")
