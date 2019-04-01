@@ -110,6 +110,8 @@ nfi_results_filter <- function(
 #' @param dominant_group Dominant functional group to summarise data, if any.
 #' @param dominant_criteria Character with the dominancy criteria, basal area
 #'   (\code{"basal_area"}) or density (\code{"density"}). Default to density.
+#' @param dominant_nfi Character with the nfi version for the dominancy in the case of
+#'   the comparision tables. Defauilt to \code{"none"}.
 #' @param conn pool connection to the database
 #' @param .funs functions list (as obtained from \code{\link[dplyr]{funs}}) with the
 #'   summarise functions
@@ -122,7 +124,7 @@ nfi_results_filter <- function(
 #' @export
 nfi_results_summarise <- function(
   nfi_data, polygon_group = 'none', functional_group = 'none', diameter_classes,
-  dominant_group = 'none', dominant_criteria = "density",
+  dominant_group = 'none', dominant_criteria = "density", dominant_nfi = 'none',
   conn,
   .funs = dplyr::funs(
     mean = mean(., na.rm = TRUE),
@@ -134,15 +136,24 @@ nfi_results_summarise <- function(
   .collect = TRUE
 ) {
 
+  # dominant nfi
+  dominant_nfi <- switch(
+    dominant_nfi,
+    none = '',
+    nfi2 = '_nfi2',
+    nfi3 = '_nfi3',
+    nfi4 = '_nfi4'
+  )
+
   # dominant group
   dominant_group <- switch(
     dominant_group,
     none = '',
-    species = glue::glue("{dominant_criteria}_species_dominant"),
-    simpspecies = glue::glue("{dominant_criteria}_simpspecies_dominant"),
-    genus = glue::glue("{dominant_criteria}_genus_dominant"),
-    dec = glue::glue("{dominant_criteria}_dec_dominant"),
-    bc = glue::glue("{dominant_criteria}_bc_dominant")
+    species = glue::glue("{dominant_criteria}_species_dominant{dominant_nfi}"),
+    simpspecies = glue::glue("{dominant_criteria}_simpspecies_dominant{dominant_nfi}"),
+    genus = glue::glue("{dominant_criteria}_genus_dominant{dominant_nfi}"),
+    dec = glue::glue("{dominant_criteria}_dec_dominant{dominant_nfi}"),
+    bc = glue::glue("{dominant_criteria}_bc_dominant{dominant_nfi}")
   )
 
   # polygon_group

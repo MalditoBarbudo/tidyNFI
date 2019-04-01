@@ -6,9 +6,10 @@
 \usage{
 nfi_results_summarise(nfi_data, polygon_group = "none",
   functional_group = "none", diameter_classes, dominant_group = "none",
-  dominant_criteria = "density", conn, .funs = dplyr::funs(mean =
-  mean(., na.rm = TRUE), se = sd(., na.rm = TRUE)/sqrt(n()), min = min(.,
-  na.rm = TRUE), max = max(., na.rm = TRUE), n = n()), .collect = TRUE)
+  dominant_criteria = "density", dominant_nfi = "none", conn,
+  .funs = dplyr::funs(mean = mean(., na.rm = TRUE), se = sd(., na.rm =
+  TRUE)/sqrt(n()), min = min(., na.rm = TRUE), max = max(., na.rm = TRUE),
+  n = n()), .collect = TRUE)
 }
 \arguments{
 \item{nfi_data}{tbl from \code{\link{nfi_results_data}} or
@@ -25,6 +26,9 @@ nfi_results_summarise(nfi_data, polygon_group = "none",
 
 \item{dominant_criteria}{Character with the dominancy criteria, basal area
 (\code{"basal_area"}) or density (\code{"density"}). Default to density.}
+
+\item{dominant_nfi}{Character with the nfi version for the dominancy in the case of
+the comparision tables. Defauilt to \code{"none"}.}
 
 \item{conn}{pool connection to the database}
 

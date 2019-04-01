@@ -15,6 +15,8 @@ test_that("summarise collected works", {
 
   data_dc <- nfi_results_data(conn, 'nfi_3', diameter_classes = TRUE)
 
+  data_comp_23 <- nfi_results_data(conn, 'nfi_2_nfi_3')
+
   expect_s3_class(
     nfi_results_summarise(
       data, polygon_group = 'province', diameter_classes = FALSE,
@@ -100,6 +102,21 @@ test_that("summarise collected works", {
       data_dc, dominant_group = 'bc', polygon_group = 'province',
       diameter_classes = TRUE, conn = conn
     )
+  )
+
+  expect_s3_class(
+    nfi_results_summarise(
+      data_comp_23, dominant_group = 'bc', polygon_group = 'province',
+      dominant_nfi = 'nfi2',
+      diameter_classes = FALSE, conn = conn
+    ), 'tbl_df'
+  )
+  expect_equal(
+    nfi_results_summarise(
+      data_comp_23, dominant_group = 'bc', polygon_group = 'province',
+      dominant_nfi = 'nfi3',
+      diameter_classes = FALSE, conn = conn
+    ) %>% nrow(), 12 # usually we will expect 8 (4*2) but there is a NA group so there are 12 (4*3) rows
   )
 })
 
