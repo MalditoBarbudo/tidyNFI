@@ -167,7 +167,8 @@ nfi_results_summarise <- function(
     municipality = 'admin_municipality',
     natural_interest_area = 'admin_natural_interest_area',
     special_protection_natural_area = 'admin_special_protection_natural_area',
-    natura_network_2000 = 'admin_natura_network_2000'
+    natura_network_2000 = 'admin_natura_network_2000',
+    file = 'poly_id'
   )
 
   # functional_group
@@ -190,7 +191,8 @@ nfi_results_summarise <- function(
         nfi_data <- nfi_data %>%
           dplyr::left_join(
             dplyr::tbl(conn, 'PLOTS') %>%
-              dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
+              dplyr::select(dplyr::one_of(c('plot_id', polygon_group))) %>%
+              # dplyr::select(plot_id, !!rlang::sym(polygon_group)) %>%
               dplyr::collect(),
             by = 'plot_id'
           )
@@ -200,7 +202,8 @@ nfi_results_summarise <- function(
         nfi_data <- nfi_data %>%
           dplyr::left_join(
             dplyr::tbl(conn, 'PLOTS') %>%
-              dplyr::select(plot_id, !!rlang::sym(polygon_group)),
+              dplyr::select(dplyr::one_of(c('plot_id', polygon_group))),
+              # dplyr::select(plot_id, !!rlang::sym(polygon_group)),
             by = 'plot_id'
           )
       }
