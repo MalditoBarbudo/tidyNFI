@@ -125,6 +125,7 @@ nfi_results_filter <- function(
 nfi_results_summarise <- function(
   nfi_data, polygon_group = 'none', functional_group = 'none', diameter_classes,
   dominant_group = 'none', dominant_criteria = "density", dominant_nfi = 'none',
+  polygon_object,
   conn,
   .funs = dplyr::funs(
     mean = mean(., na.rm = TRUE),
@@ -184,7 +185,7 @@ nfi_results_summarise <- function(
   )
 
   # preparing the data, if the admin variables are not in the data, lets join them,
-  # except for the none case
+  # except for the none case and the special case of file
   if (polygon_group != '') {
     if (any(class(nfi_data) == 'tbl_df')) {
       if (!(polygon_group %in% names(nfi_data))) {
@@ -208,6 +209,28 @@ nfi_results_summarise <- function(
           )
       }
     }
+  }
+
+  if (polygon_group == 'poly_id') {
+
+    plots_as_sf <- nfi_data %>%
+      sf::st_as_sf(
+        coords = c("coords_longitude", "coords_latitude"), crs = sf::st_crs(4326)
+      )
+
+    # browser()
+
+    indexes <- sf::st_intersects(plots_as_sf, polygon_object) %>%
+      as.numeric()
+    polys_names <- polygon_object %>%
+      dplyr::pull(poly_id) %>%
+      as.character() %>%
+      magrittr::extract(indexes)
+
+    nfi_data <- nfi_data %>%
+      dplyr::mutate(
+        poly_id = polys_names
+      )
   }
 
   # preparing the grouping vars
